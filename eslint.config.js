@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import stylistic from "@stylistic/eslint-plugin"
+import stylistic from "@stylistic/eslint-plugin";
 import prettier from "eslint-config-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
 import { globalIgnores } from "eslint/config";
@@ -30,41 +30,30 @@ export default tseslint.config([
             parser: tseslint.parser,
         },
         rules: {
-            "camelcase": "error",
+            camelcase: "error",
             "no-unused-vars": "error",
             "no-undef": "error",
             "no-const-assign": "error",
             "no-extra-boolean-cast": "error",
-            "eqeqeq": "error",
-            "curly": "error",
+            eqeqeq: "error",
+            curly: "error",
             "default-case": "error",
             "no-useless-escape": "error",
             "no-nested-ternary": "error",
             "no-console": [
                 "error",
                 {
-                    allow: [
-                        "warn",
-                        "error"
-                    ],
-                }
+                    allow: ["warn", "error"],
+                },
             ],
             "@typescript-eslint/no-explicit-any": "warn",
             "@stylistic/multiline-ternary": "error",
-            "@stylistic/no-extra-parens": [
-                "error",
-            ],
+            "@stylistic/no-extra-parens": ["error"],
             "@stylistic/spaced-comment": [
                 "error",
                 "always",
                 {
-                    "markers": [
-                        "#region",
-                        "#endregion",
-                        "/",
-                        "//",
-                        "**",
-                    ]
+                    markers: ["#region", "#endregion", "/", "//", "**"],
                 },
             ],
             "no-multiple-empty-lines": [
@@ -73,15 +62,9 @@ export default tseslint.config([
                     max: 1,
                 },
             ],
-            "require-await": [
-                "error",
-            ],
-            "no-dupe-keys": [
-                "error",
-            ],
-            "no-duplicate-case": [
-                "error",
-            ],
+            "require-await": ["error"],
+            "no-dupe-keys": ["error"],
+            "no-duplicate-case": ["error"],
         },
     },
 ]);

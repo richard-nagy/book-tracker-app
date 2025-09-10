@@ -7,7 +7,7 @@ const App: React.FC = () => {
     const [savedBooks, setSavedBooks] = useState<Book[]>([]);
 
     const handleAddBook = (book: Book) => {
-        if (!savedBooks.some((b) => b.id === book.id)) {
+        if (!savedBooks.some(b => b.id === book.id)) {
             setSavedBooks([...savedBooks, book]);
         }
     };

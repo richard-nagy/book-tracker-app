@@ -1,5 +1,6 @@
 import type { Book, GoogleBookItem } from "@/common/types";
-import React, { useState } from "react";
+import { debounce } from "lodash";
+import React, { useRef, useState } from "react";
 import { Button } from "./ui/button";
 import {
     Card,
@@ -11,6 +12,7 @@ import {
 import { Input } from "./ui/input";
 
 const noImage = "https://placehold.co/128x192/000000/FFFFFF?text=No+Image";
+const searchDebounceTimeout = 250;
 
 interface BookSearchProps {
     onAddBook: (book: Book) => void;
@@ -22,38 +24,46 @@ const BookSearch: React.FC<BookSearchProps> = ({ onAddBook }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!searchTerm.trim()) {
-            return;
-        }
+    const debouncedSearchRef = useRef(
+        debounce(async (query: string) => {
+            if (!query.trim()) {
+                setSearchResults([]);
+                setIsLoading(false);
+                return;
+            }
 
+            setIsLoading(true);
+            setError(null);
+            setSearchResults([]);
+
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`
+                );
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data from Google Books API.");
+                }
+                const data = await response.json();
+                setSearchResults((data.items as GoogleBookItem[]) || []);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("An unknown error occurred.");
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        }, searchDebounceTimeout)
+    );
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchTerm(value);
         setIsLoading(true);
-        setError(null);
-        setSearchResults([]);
-
-        try {
-            const response = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}`
-            );
-            if (!response.ok) {
-                throw new Error("Failed to fetch data from Google Books API.");
-            }
-            const data = await response.json();
-            // We cast the items to our new type for type safety.
-            setSearchResults((data.items as GoogleBookItem[]) || []);
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError("An unknown error occurred.");
-            }
-        } finally {
-            setIsLoading(false);
-        }
+        debouncedSearchRef.current(value);
     };
 
-    // The 'book' parameter is now correctly typed.
     const handleAddClick = (book: GoogleBookItem) => {
         const newBook: Book = {
             id: book.id,
@@ -64,6 +74,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ onAddBook }) => {
         onAddBook(newBook);
         setSearchResults([]);
         setSearchTerm("");
+        debouncedSearchRef.current.cancel();
     };
 
     return (
@@ -75,15 +86,23 @@ const BookSearch: React.FC<BookSearchProps> = ({ onAddBook }) => {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit={handleSearch} className="flex gap-4">
+                <form
+                    onSubmit={e => {
+                        e.preventDefault();
+                    }}
+                    className="flex gap-4"
+                >
                     <Input
                         type="text"
                         placeholder="e.g., The Hobbit"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={handleInputChange}
                         className="flex-1"
                     />
-                    <Button type="submit" disabled={isLoading}>
+                    <Button
+                        type="button"
+                        disabled={isLoading || searchTerm.length === 0}
+                    >
                         {isLoading ? "Searching..." : "Search"}
                     </Button>
                 </form>
@@ -93,7 +112,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ onAddBook }) => {
                 <div className="p-6 pt-0 space-y-4">
                     <h2 className="text-xl font-bold">Search Results</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {searchResults.map((book) => (
+                        {searchResults.map(book => (
                             <Card key={book.id}>
                                 <div className="flex p-4 items-start">
                                     <img

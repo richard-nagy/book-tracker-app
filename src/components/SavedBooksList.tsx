@@ -13,9 +13,9 @@ const SavedBooksList: React.FC<SavedBooksListProps> = ({ books }) => {
                 <CardTitle>Your Saved Books</CardTitle>
             </CardHeader>
             <CardContent>
-                {books.length > 0 ? (
+                {books.length > 0 ?
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {books.map((book) => (
+                        {books.map(book => (
                             <Card key={book.id}>
                                 <div className="flex p-4 items-start">
                                     <img
@@ -35,11 +35,10 @@ const SavedBooksList: React.FC<SavedBooksListProps> = ({ books }) => {
                             </Card>
                         ))}
                     </div>
-                ) : (
-                    <p className="text-center text-zinc-500 dark:text-zinc-400">
+                :   <p className="text-center text-zinc-500 dark:text-zinc-400">
                         Your saved books list is empty.
                     </p>
-                )}
+                }
             </CardContent>
         </Card>
     );

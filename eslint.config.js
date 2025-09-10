@@ -30,8 +30,19 @@ export default tseslint.config([
             parser: tseslint.parser,
         },
         rules: {
+            "no-extra-boolean-cast": [
+                "error"
+            ],
+            "prefer-const": [
+                "error"
+            ],
+            "no-unsafe-finally": [
+                "error"
+            ],
+            "no-empty": [
+                "off"
+            ],
             camelcase: "error",
-            "no-unused-vars": "error",
             "no-undef": "error",
             "no-const-assign": "error",
             "no-extra-boolean-cast": "error",
@@ -47,8 +58,8 @@ export default tseslint.config([
                 },
             ],
             "@typescript-eslint/no-explicit-any": "warn",
-            "@stylistic/multiline-ternary": "error",
-            "@stylistic/no-extra-parens": ["error"],
+            // "@stylistic/multiline-ternary": "error",
+            // "@stylistic/no-extra-parens": ["error"],
             "@stylistic/spaced-comment": [
                 "error",
                 "always",
@@ -65,6 +76,13 @@ export default tseslint.config([
             "require-await": ["error"],
             "no-dupe-keys": ["error"],
             "no-duplicate-case": ["error"],
+            "react/react-in-jsx-scope": "off",
+            "react-hooks/rules-of-hooks": "error",
+            "react-hooks/exhaustive-deps": "warn",
+            "react/display-name": "off",
+            "react/no-unescaped-entities": [
+                "off"
+            ],
         },
     },
 ]);
